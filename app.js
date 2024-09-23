@@ -93,4 +93,18 @@ function displayTasks() {
 // Call displayTasks
 displayTasks();
 
+function prioritizeTask(priority) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const filteredTasks = tasks.filter(task => task.priority === priority);
+
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    filteredTasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `${task.title} (Priority: ${task.priority})`;
+        taskList.appendChild(li);
+    });
+}
+
+
 
