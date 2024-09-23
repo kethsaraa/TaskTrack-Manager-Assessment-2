@@ -1,11 +1,39 @@
-// Handle login
+// Handle Sign Up
+function handleSignUp(event) {
+    event.preventDefault();
+    
+    const email = document.getElementById('signupEmail').value;
+    const password = document.getElementById('signupPassword').value;
+
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Check if the email already exists
+    const userExists = users.some(user => user.email === email);
+
+    if (userExists) {
+        alert("User with this email already exists.");
+    } else {
+        // Add the new user
+        users.push({ email, password });
+        localStorage.setItem('users', JSON.stringify(users));
+        alert("Account created successfully!");
+        showLoginForm();
+    }
+}
+
+// Handle Login
 function handleLogin(event) {
     event.preventDefault();
+
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
 
-    // Simple login logic (localStorage for demo purposes)
-    if (email === "user@example.com" && password === "password") {
+    let users = JSON.parse(localStorage.getItem('users')) || [];
+
+    // Check if the credentials match
+    const user = users.find(user => user.email === email && user.password === password);
+
+    if (user) {
         document.getElementById('taskManager').style.display = 'block';
         document.querySelector('.auth-section').style.display = 'none';
     } else {
@@ -13,28 +41,39 @@ function handleLogin(event) {
     }
 }
 
-// Handle adding tasks
-document.getElementById('taskForm').addEventListener('submit', function(event) {
-    event.preventDefault();
+// Show the Signup Form
+function showSignUpForm() {
+    document.getElementById('loginForm').style.display = 'none';
+    document.getElementById('signupForm').style.display = 'block';
+}
 
-    const title = document.getElementById('taskTitle').value;
-    const dueDate = document.getElementById('taskDueDate').value;
-    const priority = document.getElementById('taskPriority').value;
+// Show the Login Form
+function showLoginForm() {
+    document.getElementById('signupForm').style.display = 'none';
+    document.getElementById('loginForm').style.display = 'block';
+}
 
-    const task = {
-        title,
-        dueDate,
-        priority
-    };
+// Initial call to display tasks
+displayTasks();
 
-    let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    tasks.push(task);
+
+// Handle editing tasks
+function editTask(index) {
+    const tasks = JSON.parse(localStorage.getItem('tasks'));
+    const task = tasks[index];
+
+    // Populate the form with existing task data
+    document.getElementById('taskTitle').value = task.title;
+    document.getElementById('taskDueDate').value = task.dueDate;
+    document.getElementById('taskPriority').value = task.priority;
+
+    // Remove the task to avoid duplication during update
+    tasks.splice(index, 1);
     localStorage.setItem('tasks', JSON.stringify(tasks));
-
     displayTasks();
-    document.getElementById('taskForm').reset();
-});
+}
 
+// Update the displayTasks
 function displayTasks() {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '';
@@ -44,18 +83,28 @@ function displayTasks() {
         const li = document.createElement('li');
         li.innerHTML = `
             ${task.title} (Due: ${task.dueDate}, Priority: ${task.priority})
+            <button onclick="editTask(${index})">Edit</button>
             <button onclick="deleteTask(${index})">Delete</button>
         `;
         taskList.appendChild(li);
     });
 }
 
-function deleteTask(index) {
-    let tasks = JSON.parse(localStorage.getItem('tasks'));
-    tasks.splice(index, 1);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    displayTasks();
+// Call displayTasks
+displayTasks();
+
+function prioritizeTask(priority) {
+    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    const filteredTasks = tasks.filter(task => task.priority === priority);
+
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    filteredTasks.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `${task.title} (Priority: ${task.priority})`;
+        taskList.appendChild(li);
+    });
 }
 
-// Initial call to display tasks
-displayTasks();
+
+
