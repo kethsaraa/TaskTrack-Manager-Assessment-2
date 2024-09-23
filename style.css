@@ -12,6 +12,11 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+h1 {
+    color: #FF5733; 
+}
+
+
 h1, h2 {
     text-align: center;
 }
@@ -48,3 +53,17 @@ input, select, button {
     padding: 5px 10px;
     cursor: pointer;
 }
+
+button {
+    background-color: #3498db; 
+}
+
+
+footer {
+    background-color: #f1f1f1;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+}
+
+
